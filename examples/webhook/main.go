@@ -10,18 +10,17 @@ import (
 
 	"github.com/gkhaavik/vipps-mobilepay-sdk/pkg/client"
 	"github.com/gkhaavik/vipps-mobilepay-sdk/pkg/models"
+	"github.com/gkhaavik/vipps-mobilepay-sdk/pkg/utils"
 	"github.com/gkhaavik/vipps-mobilepay-sdk/pkg/webhooks"
 )
 
 func main() {
 	// Create a new client
-	vippsClient := client.NewClient(
-		"your-client-id",        // ClientID
-		"your-client-secret",    // ClientSecret
-		"your-subscription-key", // Subscription key
-		"your-msn",              // Merchant Serial Number
-		true,                    // Test mode
-	)
+	vippsClient, err := utils.NewClientFromEnv()
+
+	if err != nil {
+		log.Fatalf("Failed to create Vipps client: %v", err)
+	}
 
 	// Get access token
 	if err := vippsClient.GetAccessToken(); err != nil {

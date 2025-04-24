@@ -7,18 +7,17 @@ import (
 
 	"github.com/gkhaavik/vipps-mobilepay-sdk/pkg/client"
 	"github.com/gkhaavik/vipps-mobilepay-sdk/pkg/models"
+	"github.com/gkhaavik/vipps-mobilepay-sdk/pkg/utils"
 	"github.com/google/uuid"
 )
 
 func main() {
 	// Create a new client
-	vippsClient := client.NewClient(
-		"your-client-id",        // ClientID
-		"your-client-secret",    // ClientSecret
-		"your-subscription-key", // Subscription key
-		"your-msn",              // Merchant Serial Number
-		true,                    // Test mode
-	)
+	vippsClient, err := utils.NewClientFromEnv()
+
+	if err != nil {
+		log.Fatalf("Failed to create Vipps client: %v", err)
+	}
 
 	// Set system info (optional)
 	vippsClient.SetSystemInfo("MyShop", "1.0.0", "MyShopPlugin", "2.0.0")
@@ -34,11 +33,10 @@ func main() {
 	// Create a unique reference for the payment
 	reference := fmt.Sprintf("order-%s", uuid.New().String())
 
-	// Create payment request
-	phoneNumber := "4712345678" // Customer's phone number with country code
+	phoneNumber := utils.PhoneNumber // Customer's phone number with country code
 	req := models.CreatePaymentRequest{
 		Amount: models.Amount{
-			Currency: "NOK",
+			Currency: "DKK",
 			Value:    1000, // 10.00 NOK (amount in minor units)
 		},
 		Customer: &models.Customer{

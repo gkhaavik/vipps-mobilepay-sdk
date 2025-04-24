@@ -3,6 +3,7 @@ package client
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/gkhaavik/vipps-mobilepay-sdk/pkg/models"
@@ -25,8 +26,12 @@ func NewPayment(client *Client) *Payment {
 func (p *Payment) Create(req models.CreatePaymentRequest) (*models.CreatePaymentResponse, error) {
 	endpoint := "/epayment/v1/payments"
 
-	body, _, err := p.client.DoRequest(http.MethodPost, endpoint, req, "")
+	// Generate a new idempotency key for the request
+	idempotencyKey := uuid.New().String()
+
+	body, statusCode, err := p.client.DoRequest(http.MethodPost, endpoint, req, idempotencyKey)
 	if err != nil {
+		log.Printf("Error creating payment, status code: %d, response: %s", statusCode, string(body))
 		return nil, fmt.Errorf("failed to create payment: %w", err)
 	}
 

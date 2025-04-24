@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strconv"
 	"time"
 )
 
@@ -128,7 +129,7 @@ func (c *Client) GetAccessToken() error {
 
 	var tokenResp struct {
 		AccessToken string `json:"access_token"`
-		ExpiresIn   int    `json:"expires_in"`
+		ExpiresIn   string `json:"expires_in"`
 		TokenType   string `json:"token_type"`
 	}
 
@@ -138,7 +139,14 @@ func (c *Client) GetAccessToken() error {
 	}
 
 	c.AccessToken = tokenResp.AccessToken
-	c.TokenExpiry = time.Now().Add(time.Duration(tokenResp.ExpiresIn) * time.Second)
+
+	// Convert expires_in from string to int
+	expiresIn, err := strconv.Atoi(tokenResp.ExpiresIn)
+	if err != nil {
+		return fmt.Errorf("failed to convert expires_in to int: %w", err)
+	}
+
+	c.TokenExpiry = time.Now().Add(time.Duration(expiresIn) * time.Second)
 
 	return nil
 }

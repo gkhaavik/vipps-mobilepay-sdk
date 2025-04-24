@@ -16,13 +16,13 @@ type WebhookEvent struct {
 
 // WebhookRegistration represents a webhook registration
 type WebhookRegistration struct {
-	ID        string   `json:"id"`                  // The unique identifier for this webhook
-	URL       string   `json:"url"`                 // The callback URL where notifications are sent
-	Events    []string `json:"events"`              // List of event types to subscribe to
-	Created   string   `json:"created,omitempty"`   // When the webhook was registered
-	Status    string   `json:"status,omitempty"`    // The status of the webhook (active, etc.)
-	MSN       string   `json:"msn,omitempty"`       // The merchant serial number
-	SecretKey string   `json:"secretKey,omitempty"` // The secret key for validating signatures
+	ID     string   `json:"id"`     // The unique identifier for this webhook
+	URL    string   `json:"url"`    // The callback URL where notifications are sent
+	Events []string `json:"events"` // List of event types to subscribe to
+	// Created   string   `json:"created,omitempty"`   // When the webhook was registered
+	// Status    string   `json:"status,omitempty"`    // The status of the webhook (active, etc.)
+	// MSN       string   `json:"msn,omitempty"`       // The merchant serial number
+	Secret string `json:"secret,omitempty"` // The secret key for validating signatures
 }
 
 // WebhookRegistrationRequest represents a request to register a webhook

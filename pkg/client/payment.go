@@ -95,45 +95,11 @@ func (p *Payment) Capture(reference string, req models.ModificationRequest) (*mo
 	return &response, nil
 }
 
-// CaptureWithKey captures funds using a specific idempotency key
-func (p *Payment) CaptureWithKey(reference string, req models.ModificationRequest, idempotencyKey string) (*models.AdjustmentResponse, error) {
-	endpoint := fmt.Sprintf("/epayment/v1/payments/%s/capture", reference)
-
-	body, _, err := p.client.DoRequest(http.MethodPost, endpoint, req, idempotencyKey)
-	if err != nil {
-		return nil, fmt.Errorf("failed to capture payment: %w", err)
-	}
-
-	var response models.AdjustmentResponse
-	if err := json.Unmarshal(body, &response); err != nil {
-		return nil, fmt.Errorf("failed to parse response: %w", err)
-	}
-
-	return &response, nil
-}
-
 // Refund returns funds from a previously captured payment
 func (p *Payment) Refund(reference string, req models.ModificationRequest) (*models.AdjustmentResponse, error) {
 	endpoint := fmt.Sprintf("/epayment/v1/payments/%s/refund", reference)
 
 	idempotencyKey := uuid.New().String()
-	body, _, err := p.client.DoRequest(http.MethodPost, endpoint, req, idempotencyKey)
-	if err != nil {
-		return nil, fmt.Errorf("failed to refund payment: %w", err)
-	}
-
-	var response models.AdjustmentResponse
-	if err := json.Unmarshal(body, &response); err != nil {
-		return nil, fmt.Errorf("failed to parse response: %w", err)
-	}
-
-	return &response, nil
-}
-
-// RefundWithKey refunds a payment using a specific idempotency key
-func (p *Payment) RefundWithKey(reference string, req models.ModificationRequest, idempotencyKey string) (*models.AdjustmentResponse, error) {
-	endpoint := fmt.Sprintf("/epayment/v1/payments/%s/refund", reference)
-
 	body, _, err := p.client.DoRequest(http.MethodPost, endpoint, req, idempotencyKey)
 	if err != nil {
 		return nil, fmt.Errorf("failed to refund payment: %w", err)

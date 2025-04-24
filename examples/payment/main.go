@@ -37,7 +37,7 @@ func main() {
 	req := models.CreatePaymentRequest{
 		Amount: models.Amount{
 			Currency: "DKK",
-			Value:    1000, // 10.00 NOK (amount in minor units)
+			Value:    1000, // 10.00 DKK (amount in minor units)
 		},
 		Customer: &models.Customer{
 			PhoneNumber: &phoneNumber,

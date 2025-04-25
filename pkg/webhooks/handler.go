@@ -123,10 +123,6 @@ func (h *Handler) ParseEvent(r *http.Request) (*models.WebhookEvent, error) {
 // HandleHTTP creates an http.HandlerFunc that processes webhook events
 func (h *Handler) HandleHTTP(handler func(event *models.WebhookEvent) error) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		// Log all requests
-		fmt.Printf("Received webhook request: %s %s\n", r.Method, r.URL.Path)
-		fmt.Printf("Headers: %v\n", r.Header)
-
 		// Only allow POST requests
 		if r.Method != http.MethodPost {
 			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
@@ -185,8 +181,6 @@ func (r *Router) HandleDefault(handler EventProcessor) {
 
 // Process routes an event to the appropriate handler
 func (r *Router) Process(event *models.WebhookEvent) error {
-	fmt.Println("Process is called " + event.Name)
-
 	if handler, ok := r.handlers[event.Name]; ok {
 		return handler(event)
 	}

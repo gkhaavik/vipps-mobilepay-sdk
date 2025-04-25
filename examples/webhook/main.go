@@ -37,34 +37,40 @@ func main() {
 		log.Fatalf("Failed to get webhooks: %v", err)
 	}
 
-	if len(existingWebhooks) == 0 {
-		// Register a new webhook
-		fmt.Println("No webhooks found, registering a new one...")
-		webhookReq := models.WebhookRegistrationRequest{
-			URL: "https://example.com/webhook", // Replace with your actual webhook endpoint
-			Events: []string{
-				string(models.WebhookEventPaymentAuthorized),
-				string(models.WebhookEventPaymentCaptured),
-				string(models.WebhookEventPaymentRefunded),
-			},
-		}
+	var secretKey string
 
-		webhook, err := webhookClient.Register(webhookReq)
-		if err != nil {
-			log.Fatalf("Failed to register webhook: %v", err)
-		}
-
-		fmt.Printf("Webhook registered successfully! ID: %s\n", webhook.ID)
-	} else {
-		fmt.Printf("Found %d existing webhooks\n", len(existingWebhooks))
-		for i, webhook := range existingWebhooks {
-			fmt.Printf("%d. ID: %s, URL: %s, Events: %v\n", i+1, webhook.ID, webhook.URL, webhook.Events)
+	if len(existingWebhooks) > 0 {
+		// remove all webhooks
+		for _, webhook := range existingWebhooks {
+			if err := webhookClient.Delete(webhook.ID); err != nil {
+				log.Printf("Failed to remove webhook %s: %v", webhook.ID, err)
+			} else {
+				fmt.Printf("Webhook %s removed successfully\n", webhook.ID)
+			}
 		}
 	}
 
+	// Register a new webhook
+	webhookReq := models.WebhookRegistrationRequest{
+		URL: utils.WebhookURL, // Replace with your actual webhook endpoint
+		Events: []string{
+			string(models.WebhookEventPaymentAuthorized),
+			string(models.WebhookEventPaymentCaptured),
+			string(models.WebhookEventPaymentRefunded),
+		},
+	}
+
+	webhook, err := webhookClient.Register(webhookReq)
+	if err != nil {
+		log.Fatalf("Failed to register webhook: %v", err)
+	}
+
+	secretKey = webhook.Secret
+
+	fmt.Printf("Webhook registered successfully! ID: %s\n", webhook.ID)
+
 	// Create a webhook handler
 	// In a production environment, you would get this from your webhook registration
-	secretKey := "your-webhook-secret-key"
 	handler := webhooks.NewHandler(secretKey)
 
 	// Create a webhook router
@@ -111,7 +117,6 @@ func handleAuthorized(event *models.WebhookEvent) error {
 		float64(event.Amount.Value)/100,
 		event.Amount.Currency)
 
-	// In a real application, you would update your database and
 	// trigger other business logic based on the authorized payment
 
 	return nil
@@ -124,7 +129,6 @@ func handleCaptured(event *models.WebhookEvent) error {
 		event.Amount.Currency)
 
 	// In a real application, you would mark the order as paid
-	// and trigger fulfillment processes
 
 	return nil
 }

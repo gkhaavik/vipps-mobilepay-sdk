@@ -12,6 +12,7 @@ import (
 const DefaultEnvFile = ".env"
 
 var PhoneNumber string
+var WebhookURL string
 
 // LoadEnvFromRoot attempts to load the .env file from the project root
 func LoadEnvFromRoot() error {
@@ -54,6 +55,7 @@ func NewClientFromEnv() (*client.Client, error) {
 	msn := GetEnv("VIPPS_MSN", "")
 	testMode := GetEnvBool("VIPPS_TEST_MODE", true)
 	PhoneNumber = GetEnv("VIPPS_PHONE_NUMBER", "")
+	WebhookURL = GetEnv("VIPPS_WEBHOOK_URL", "")
 
 	// Create client
 	vippsClient := client.NewClient(

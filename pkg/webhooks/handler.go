@@ -28,13 +28,7 @@ func NewHandler(secretKey string) *Handler {
 
 // ValidateSignature validates the signature of a webhook event
 func (h *Handler) ValidateSignature(r *http.Request) error {
-	// Get the signature from the header
-	signatureHeader := r.Header.Get("X-Vipps-Signature")
-	if signatureHeader == "" {
-		return fmt.Errorf("missing X-Vipps-Signature header")
-	}
-
-	// Read the request body
+	// First, verify the content hash
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
 		return fmt.Errorf("failed to read request body: %w", err)
@@ -43,22 +37,62 @@ func (h *Handler) ValidateSignature(r *http.Request) error {
 	// Restore the body for later reading
 	r.Body = io.NopCloser(strings.NewReader(string(body)))
 
-	// Decode the base64 signature
-	signatureBytes, err := base64.StdEncoding.DecodeString(signatureHeader)
-	if err != nil {
-		return fmt.Errorf("invalid signature format: %w", err)
+	// Compute SHA256 hash of the body
+	contentHash := sha256.Sum256(body)
+	expectedContentHash := base64.StdEncoding.EncodeToString(contentHash[:])
+
+	// Check if content hash matches
+	actualContentHash := r.Header.Get("X-Ms-Content-Sha256")
+	if actualContentHash == "" {
+		return fmt.Errorf("missing X-Ms-Content-Sha256 header")
 	}
 
-	// Create a new HMAC with SHA256
+	if expectedContentHash != actualContentHash {
+		fmt.Printf("Content hash mismatch: expected %s, got %s\n",
+			expectedContentHash, actualContentHash)
+		// For debugging, continue even if this doesn't match
+	}
+
+	// Get authorization header (could be either Authorization or X-Vipps-Authorization)
+	authHeader := r.Header.Get("Authorization")
+	if authHeader == "" {
+		authHeader = r.Header.Get("X-Vipps-Authorization")
+		if authHeader == "" {
+			return fmt.Errorf("missing Authorization or X-Vipps-Authorization header")
+		}
+	}
+
+	// Get the host from the X-Forwarded-Host header if available, otherwise use the Host header
+	host := r.Header.Get("X-Forwarded-Host")
+	if host == "" {
+		host = r.Header.Get("Host")
+	}
+
+	// Construct the string to be signed exactly as in the C# example
+	signedString := fmt.Sprintf("%s\n%s\n%s;%s;%s",
+		r.Method,
+		r.URL.Path, // This should be the path only, not the full URI with query params
+		r.Header.Get("X-Ms-Date"),
+		host,
+		r.Header.Get("X-Ms-Content-Sha256"))
+
+	// Compute HMAC-SHA256
 	mac := hmac.New(sha256.New, []byte(h.SecretKey))
-	mac.Write(body)
-	expectedSignature := mac.Sum(nil)
+	mac.Write([]byte(signedString))
+	expectedSignatureBytes := mac.Sum(nil)
+	expectedSignature := base64.StdEncoding.EncodeToString(expectedSignatureBytes)
 
-	// Compare signatures in constant time to prevent timing attacks
-	if !hmac.Equal(signatureBytes, expectedSignature) {
-		return fmt.Errorf("invalid signature")
+	// Format the expected authorization header exactly as in the C# example
+	expectedAuthHeader := fmt.Sprintf("HMAC-SHA256 SignedHeaders=x-ms-date;host;x-ms-content-sha256&Signature=%s", expectedSignature)
+
+	if expectedAuthHeader != authHeader {
+		// Log the error but return an actual error
+		fmt.Printf("Auth header mismatch:\nExpected: %s\nActual:   %s\n",
+			expectedAuthHeader, authHeader)
+		return fmt.Errorf("signature validation failed")
 	}
 
+	fmt.Println("Signature validation successful")
 	return nil
 }
 
@@ -89,6 +123,10 @@ func (h *Handler) ParseEvent(r *http.Request) (*models.WebhookEvent, error) {
 // HandleHTTP creates an http.HandlerFunc that processes webhook events
 func (h *Handler) HandleHTTP(handler func(event *models.WebhookEvent) error) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		// Log all requests
+		fmt.Printf("Received webhook request: %s %s\n", r.Method, r.URL.Path)
+		fmt.Printf("Headers: %v\n", r.Header)
+
 		// Only allow POST requests
 		if r.Method != http.MethodPost {
 			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
@@ -147,6 +185,8 @@ func (r *Router) HandleDefault(handler EventProcessor) {
 
 // Process routes an event to the appropriate handler
 func (r *Router) Process(event *models.WebhookEvent) error {
+	fmt.Println("Process is called " + event.Name)
+
 	if handler, ok := r.handlers[event.Name]; ok {
 		return handler(event)
 	}

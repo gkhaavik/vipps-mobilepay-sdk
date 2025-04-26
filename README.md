@@ -253,3 +253,7 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 - [Vipps MobilePay Developer Portal](https://developer.vippsmobilepay.com/)
 - [ePayment API Documentation](https://developer.vippsmobilepay.com/docs/APIs/epayment-api/)
 - [Webhooks API Documentation](https://developer.vippsmobilepay.com/docs/APIs/webhooks-api/)
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

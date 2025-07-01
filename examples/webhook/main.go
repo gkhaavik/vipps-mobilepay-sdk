@@ -8,10 +8,10 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/gkhaavik/vipps-mobilepay-sdk/pkg/client"
-	"github.com/gkhaavik/vipps-mobilepay-sdk/pkg/models"
-	"github.com/gkhaavik/vipps-mobilepay-sdk/pkg/utils"
-	"github.com/gkhaavik/vipps-mobilepay-sdk/pkg/webhooks"
+	"github.com/zenfulcode/vipps-mobilepay-sdk/pkg/client"
+	"github.com/zenfulcode/vipps-mobilepay-sdk/pkg/models"
+	"github.com/zenfulcode/vipps-mobilepay-sdk/pkg/utils"
+	"github.com/zenfulcode/vipps-mobilepay-sdk/pkg/webhooks"
 )
 
 func main() {

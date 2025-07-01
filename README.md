@@ -1,8 +1,8 @@
 # Vipps MobilePay SDK for Go
 
-[![Go Reference](https://pkg.go.dev/badge/github.com/gkhaavik/vipps-mobilepay-sdk.svg)](https://pkg.go.dev/github.com/gkhaavik/vipps-mobilepay-sdk)
-[![Go Report Card](https://goreportcard.com/badge/github.com/gkhaavik/vipps-mobilepay-sdk)](https://goreportcard.com/report/github.com/gkhaavik/vipps-mobilepay-sdk)
-[![License](https://img.shields.io/github/license/gkhaavik/vipps-mobilepay-sdk)](LICENSE)
+[![Go Reference](https://pkg.go.dev/badge/github.com/zenfulcode/vipps-mobilepay-sdk.svg)](https://pkg.go.dev/github.com/zenfulcode/vipps-mobilepay-sdk)
+[![Go Report Card](https://goreportcard.com/badge/github.com/zenfulcode/vipps-mobilepay-sdk)](https://goreportcard.com/report/github.com/zenfulcode/vipps-mobilepay-sdk)
+[![License](https://img.shields.io/github/license/zenfulcode/vipps-mobilepay-sdk)](LICENSE)
 
 A comprehensive Go SDK for the Vipps MobilePay ePayment API. This SDK allows you to easily integrate Vipps MobilePay payments into your Go applications.
 
@@ -19,7 +19,7 @@ A comprehensive Go SDK for the Vipps MobilePay ePayment API. This SDK allows you
 ## Installation
 
 ```bash
-go get github.com/gkhaavik/vipps-mobilepay-sdk
+go get github.com/zenfulcode/vipps-mobilepay-sdk
 ```
 
 ## Quick Start
@@ -31,8 +31,8 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/gkhaavik/vipps-mobilepay-sdk/pkg/client"
-	"github.com/gkhaavik/vipps-mobilepay-sdk/pkg/models"
+	"github.com/zenfulcode/vipps-mobilepay-sdk/pkg/client"
+	"github.com/zenfulcode/vipps-mobilepay-sdk/pkg/models"
 	"github.com/google/uuid"
 )
 

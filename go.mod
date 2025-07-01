@@ -1,4 +1,4 @@
-module github.com/gkhaavik/vipps-mobilepay-sdk
+module github.com/zenfulcode/vipps-mobilepay-sdk
 
 go 1.21
 

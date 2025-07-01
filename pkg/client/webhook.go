@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/gkhaavik/vipps-mobilepay-sdk/pkg/models"
+	"github.com/zenfulcode/vipps-mobilepay-sdk/pkg/models"
 )
 
 // Webhook handles all webhook-related API calls

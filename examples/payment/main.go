@@ -5,10 +5,10 @@ import (
 	"log"
 	"time"
 
-	"github.com/gkhaavik/vipps-mobilepay-sdk/pkg/client"
-	"github.com/gkhaavik/vipps-mobilepay-sdk/pkg/models"
-	"github.com/gkhaavik/vipps-mobilepay-sdk/pkg/utils"
 	"github.com/google/uuid"
+	"github.com/zenfulcode/vipps-mobilepay-sdk/pkg/client"
+	"github.com/zenfulcode/vipps-mobilepay-sdk/pkg/models"
+	"github.com/zenfulcode/vipps-mobilepay-sdk/pkg/utils"
 )
 
 func main() {

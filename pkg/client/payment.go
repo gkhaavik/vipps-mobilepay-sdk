@@ -6,8 +6,8 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/gkhaavik/vipps-mobilepay-sdk/pkg/models"
 	"github.com/google/uuid"
+	"github.com/zenfulcode/vipps-mobilepay-sdk/pkg/models"
 )
 
 // Payment handles all payment-related API calls

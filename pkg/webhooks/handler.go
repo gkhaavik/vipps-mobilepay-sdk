@@ -11,7 +11,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/gkhaavik/vipps-mobilepay-sdk/pkg/models"
+	"github.com/zenfulcode/vipps-mobilepay-sdk/pkg/models"
 )
 
 // Handler processes webhook events from Vipps MobilePay
@@ -181,6 +181,7 @@ func (r *Router) HandleDefault(handler EventProcessor) {
 
 // Process routes an event to the appropriate handler
 func (r *Router) Process(event *models.WebhookEvent) error {
+	fmt.Println("Processing event:", event.Name)
 	if handler, ok := r.handlers[event.Name]; ok {
 		return handler(event)
 	}

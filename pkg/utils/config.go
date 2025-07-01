@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/gkhaavik/vipps-mobilepay-sdk/pkg/client"
+	"github.com/zenfulcode/vipps-mobilepay-sdk/pkg/client"
 )
 
 // DefaultEnvFile is the default path to the .env file
